@@ -1,0 +1,368 @@
+# ================================================================================
+# SECURITY-CRITICAL .gitignore for V-Server Project
+# This file ensures NO sensitive data gets committed to GitHub
+# ================================================================================
+
+# ==============================================================================
+# 🔒 SSH KEYS & CERTIFICATES (CRITICAL SECURITY)
+# ==============================================================================
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+*.jks
+*.keystore
+*_rsa
+*_rsa.pub
+*_ed25519
+*_ed25519.pub
+*_ecdsa
+*_ecdsa.pub
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+known_hosts
+authorized_keys*
+ssh_host_*
+*.ppk
+*.ssh
+.ssh/
+~/.ssh/
+
+# ==============================================================================
+# 🔐 PASSWORDS & SECRETS (CRITICAL SECURITY)
+# ==============================================================================
+*.env
+.env*
+*.secret
+*.secrets
+secrets.txt
+passwords.txt
+config.inc.php
+wp-config.php
+database.yml
+credentials.json
+auth.json
+service-account*.json
+
+# ==============================================================================
+# ⚙️ SERVER CONFIGURATION FILES (HIGH SECURITY)
+# ==============================================================================
+# NGINX sensitive configs
+/etc/nginx/nginx.conf
+nginx.conf
+sites-available/
+sites-enabled/
+ssl/
+certs/
+
+# Apache sensitive configs
+.htaccess
+.htpasswd
+httpd.conf
+apache2.conf
+
+# SSH daemon config
+sshd_config
+ssh_config
+
+# Database configs
+my.cnf
+*.cnf
+pg_hba.conf
+postgresql.conf
+
+# System configs
+/etc/shadow
+/etc/passwd
+/etc/group
+/etc/sudoers
+
+# ==============================================================================
+# 💾 DATABASE & BACKUPS (HIGH SECURITY)
+# ==============================================================================
+*.sql
+*.dump
+*.backup
+*.bak
+*.db
+*.sqlite
+*.sqlite3
+database/
+backups/
+dumps/
+*.tar.gz
+*.zip
+*.7z
+backup_*
+*_backup
+db_backup*
+
+# ==============================================================================
+# 📝 LOG FILES & TEMPORARY FILES
+# ==============================================================================
+*.log
+*.logs
+logs/
+/var/log/
+access.log*
+error.log*
+debug.log
+*.tmp
+*.temp
+temp/
+tmp/
+cache/
+.cache/
+*.pid
+*.lock
+*.swp
+*.swo
+*~
+
+# ==============================================================================
+# 🖥️ SYSTEM & OS FILES
+# ==============================================================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==============================================================================
+# 🔧 DEVELOPMENT & EDITOR FILES
+# ==============================================================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+.vim/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ==============================================================================
+# 📦 DEPENDENCY & PACKAGE FILES
+# ==============================================================================
+node_modules/
+vendor/
+.npm
+.yarn/
+package-lock.json
+yarn.lock
+composer.lock
+Pipfile.lock
+requirements.txt.lock
+
+# ==============================================================================
+# 🏗️ BUILD & DEPLOYMENT FILES
+# ==============================================================================
+dist/
+build/
+.next/
+.nuxt/
+.output/
+.vercel/
+.netlify/
+deploy/
+deployment/
+*.tar
+*.tgz
+*.war
+*.ear
+*.sar
+*.class
+
+# ==============================================================================
+# 🐳 DOCKER & CONTAINERIZATION
+# ==============================================================================
+docker-compose.override.yml
+.dockerignore
+Dockerfile.prod
+.docker/
+containers/
+
+# ==============================================================================
+# ☁️ CLOUD & INFRASTRUCTURE SECRETS
+# ==============================================================================
+# AWS
+.aws/
+*.pem
+aws-credentials*
+awscredentials*
+
+# Google Cloud
+gcloud/
+service-account*.json
+*.json
+
+# Azure
+.azure/
+azure-credentials*
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform/
+terraform.tfstate.backup
+
+# Ansible
+vault.yml
+vault_pass*
+inventory.ini
+hosts.ini
+
+# Kubernetes
+kubeconfig*
+*.kubeconfig
+.kube/
+
+# ==============================================================================
+# 📊 MONITORING & ANALYTICS
+# ==============================================================================
+.monitoring/
+metrics/
+analytics/
+*.stats
+newrelic.ini
+datadog.conf
+
+# ==============================================================================
+# 🔄 VERSION CONTROL & BACKUP SYSTEMS
+# ==============================================================================
+.svn/
+.hg/
+.bzr/
+CVS/
+.git/hooks/
+*.orig
+*.rej
+*.patch
+
+# ==============================================================================
+# 🌐 WEB SERVER SPECIFICS
+# ==============================================================================
+# PHP
+wp-config-local.php
+local-config.php
+.user.ini
+
+# Node.js
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ==============================================================================
+# 📱 MOBILE & CERTIFICATE SPECIFIC
+# ==============================================================================
+*.mobileprovision
+*.p8
+*.cer
+*.certSigningRequest
+
+# ==============================================================================
+# 🔧 SERVER MONITORING & PERFORMANCE
+# ==============================================================================
+*.prof
+*.trace
+*.out
+*.heap
+*.cpu
+monitoring/
+performance/
+
+# ==============================================================================
+# 📋 PROJECT SPECIFIC EXCLUDES
+# ==============================================================================
+# V-Server specific backups
+website_backup_*
+server_backup_*
+config_backup_*
+*_original
+*_old
+
+# Local development files
+local/
+dev/
+development/
+
+# Test files with potential sensitive data
+test_data/
+sample_data/
+dummy_data/
+
+# ==============================================================================
+# 🚨 EMERGENCY SECURITY PATTERNS
+# ==============================================================================
+# Catch common password/secret patterns
+*password*
+*secret*
+*private*
+*confidential*
+*sensitive*
+*credential*
+*token*
+*api_key*
+*api-key*
+*apikey*
+
+# Backup extensions that might contain sensitive data
+*.bak.*
+*.backup.*
+*.old.*
+*_backup.*
+*_bak.*
+
+# ==============================================================================
+# END OF SECURITY .gitignore
+# Always review files before committing!
+# Use 'git status' and 'git diff --cached' before 'git commit'
+# ================================================================================
