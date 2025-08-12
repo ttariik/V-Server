@@ -43,7 +43,7 @@ ssh-keygen -t rsa -b 4096 -C "tsabanovic@v-server-setup" -f ~/.ssh/v_server_key
 
 **Key Type Decision: RSA 4096-bit vs ED25519**
 
-We chose RSA 4096-bit over the more modern ED25519 for the following reasons:
+I chose RSA 4096-bit over the more modern ED25519 for the following reasons:
 - **Maximum Compatibility**: RSA works on all systems, including legacy infrastructure
 - **Explicit Security**: The 4096-bit key length clearly demonstrates strong encryption
 - **Enterprise Standard**: Many organizations still prefer RSA for server access
