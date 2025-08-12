@@ -67,103 +67,103 @@ ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112
 
 #### 4. Disable Password Authentication
 
-**🔐 WARUM PASSWORD AUTHENTICATION DEAKTIVIEREN?**
+**🔐 WHY DISABLE PASSWORD AUTHENTICATION?**
 
-Password Authentication deaktivieren ist eine **kritische Sicherheitsmaßnahme** aus folgenden Gründen:
+Disabling password authentication is a **critical security measure** for the following reasons:
 
-- **🛡️ Schutz vor Brute-Force Attacken**: Angreifer können nicht mehr endlos Passwort-Kombinationen ausprobieren
-- **🔑 Stärkere Authentifizierung**: SSH-Keys sind mathematisch viel sicherer als Passwörter
-- **⚡ Bessere Performance**: Keine CPU-Last durch fehlgeschlagene Passwort-Versuche
-- **📊 Weniger Log-Spam**: Keine ständigen failed login attempts in den Logs
-- **🎯 Compliance**: Viele Sicherheitsstandards fordern Key-only Authentication
+- **🛡️ Protection against Brute-Force Attacks**: Attackers can no longer endlessly try password combinations
+- **🔑 Stronger Authentication**: SSH keys are mathematically much more secure than passwords
+- **⚡ Better Performance**: No CPU load from failed password attempts
+- **📊 Less Log Spam**: No constant failed login attempts in the logs
+- **🎯 Compliance**: Many security standards require key-only authentication
 
-**⚠️ WICHTIG: Stelle sicher, dass SSH Key Authentication funktioniert BEVOR du Password Authentication deaktivierst!**
+**⚠️ IMPORTANT: Ensure SSH Key Authentication works BEFORE disabling Password Authentication!**
 
-**🔧 SCHRITT-FÜR-SCHRITT KONFIGURATION:**
+**🔧 STEP-BY-STEP CONFIGURATION:**
 
 ```bash
-# 1. Backup der SSH-Konfiguration erstellen (WICHTIG!)
+# 1. Create SSH configuration backup (CRITICAL!)
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
-echo "✅ Backup erstellt unter /etc/ssh/sshd_config.backup"
+echo "✅ Backup created at /etc/ssh/sshd_config.backup"
 
-# 2. Password Authentication deaktivieren
-# Behandelt sowohl kommentierte (#) als auch aktive Zeilen
+# 2. Disable password authentication
+# Handles both commented (#) and active lines
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-echo "✅ Password Authentication deaktiviert"
+echo "✅ Password Authentication disabled"
 
-# 3. Public Key Authentication explizit aktivieren
-# Stellt sicher dass SSH-Keys weiterhin funktionieren
+# 3. Explicitly enable public key authentication
+# Ensures SSH keys continue to work
 sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 sudo sed -i 's/PubkeyAuthentication no/PubkeyAuthentication yes/' /etc/ssh/sshd_config
-echo "✅ Public Key Authentication aktiviert"
+echo "✅ Public Key Authentication enabled"
 
-# 4. Konfiguration überprüfen
-echo "🔍 Aktuelle SSH-Konfiguration:"
+# 4. Verify configuration
+echo "🔍 Current SSH configuration:"
 sudo grep -E '(PasswordAuthentication|PubkeyAuthentication)' /etc/ssh/sshd_config
 
-# 5. SSH-Konfiguration auf Syntax-Fehler testen
+# 5. Test SSH configuration for syntax errors
 sudo sshd -t
 if [ $? -eq 0 ]; then
-    echo "✅ SSH-Konfiguration ist syntaktisch korrekt"
+    echo "✅ SSH configuration is syntactically correct"
 else
-    echo "❌ SSH-Konfiguration hat Fehler! Backup wiederherstellen!"
+    echo "❌ SSH configuration has errors! Restore backup!"
     exit 1
 fi
 
-# 6. SSH-Service neu starten
+# 6. Restart SSH service
 sudo systemctl restart ssh
-echo "✅ SSH-Service neu gestartet"
+echo "✅ SSH service restarted"
 
-# 7. Service-Status prüfen
+# 7. Check service status
 sudo systemctl status ssh --no-pager
 ```
 
-**📋 ERWARTETE KONFIGURATION:**
+**📋 EXPECTED CONFIGURATION:**
 
-Nach der Konfiguration sollten folgende Werte in `/etc/ssh/sshd_config` stehen:
+After configuration, the following values should be in `/etc/ssh/sshd_config`:
 
 ```
-PasswordAuthentication no       # ❌ Passwort-Login deaktiviert
-PubkeyAuthentication yes        # ✅ SSH-Key Login aktiviert
+PasswordAuthentication no       # ❌ Password login disabled
+PubkeyAuthentication yes        # ✅ SSH key login enabled
 ```
 
-**🧪 SOFORTIGER TEST:**
+**🧪 IMMEDIATE TESTING:**
 
 ```bash
-# Test 1: SSH Key Login (sollte funktionieren)
-ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "echo 'SSH Key Login erfolgreich!'"
+# Test 1: SSH Key Login (should work)
+ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "echo 'SSH Key Login successful!'"
 
-# Test 2: Password Login (sollte fehlschlagen)
-# Versuche ohne Key - sollte "Permission denied" geben
+# Test 2: Password Login (should fail)
+# Try without key - should return "Permission denied"
 ssh -o PreferredAuthentications=password tsabanovic@91.99.193.112
-# Erwartete Antwort: "Permission denied (publickey)."
+# Expected response: "Permission denied (publickey)."
 ```
 
 **🚨 TROUBLESHOOTING:**
 
-Falls der Login nicht mehr funktioniert:
+If login no longer works:
 
 ```bash
-# 1. Backup wiederherstellen
+# 1. Restore backup
 sudo cp /etc/ssh/sshd_config.backup /etc/ssh/sshd_config
 sudo systemctl restart ssh
 
-# 2. SSH Key Berechtigung prüfen
-ls -la ~/.ssh/v_server_key      # Sollte 600 (-rw-------) sein
-chmod 600 ~/.ssh/v_server_key   # Falls nötig korrigieren
+# 2. Check SSH key permissions
+ls -la ~/.ssh/v_server_key      # Should be 600 (-rw-------)
+chmod 600 ~/.ssh/v_server_key   # Correct if necessary
 
-# 3. Authorized Keys auf Server prüfen
+# 3. Check authorized keys on server
 ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "ls -la ~/.ssh/authorized_keys"
 ```
 
-**🎯 SICHERHEITS-RESULTAT:**
+**🎯 SECURITY RESULT:**
 
-Nach dieser Konfiguration ist dein Server:
-- ✅ **Immun gegen Passwort-Brute-Force Attacken**
-- ✅ **Nur noch per SSH-Key erreichbar**
-- ✅ **Entspricht modernen Sicherheitsstandards**
-- ✅ **Deutlich sicherer als Standard-Konfiguration**
+After this configuration, your server is:
+- ✅ **Immune to password brute-force attacks**
+- ✅ **Only accessible via SSH key**
+- ✅ **Compliant with modern security standards**
+- ✅ **Significantly more secure than default configuration**
 
 ### Web Server Installation
 
