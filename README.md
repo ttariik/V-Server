@@ -22,6 +22,8 @@ This repository documents the complete setup process for a V-Server (Virtual Pri
 - **IP Address**: 91.99.193.112
 - **Operating System**: Ubuntu 22.04.5 LTS
 - **Username**: tsabanovic
+- **Web Server**: NGINX 1.18.0 (Port 8081)
+- **Website URL**: http://91.99.193.112:8081
 
 ## Prerequisites
 
@@ -38,6 +40,16 @@ This repository documents the complete setup process for a V-Server (Virtual Pri
 # Generate new SSH key pair on local computer
 ssh-keygen -t rsa -b 4096 -C "tsabanovic@v-server-setup" -f ~/.ssh/v_server_key
 ```
+
+**Key Type Decision: RSA 4096-bit vs ED25519**
+
+We chose RSA 4096-bit over the more modern ED25519 for the following reasons:
+- **Maximum Compatibility**: RSA works on all systems, including legacy infrastructure
+- **Explicit Security**: The 4096-bit key length clearly demonstrates strong encryption
+- **Enterprise Standard**: Many organizations still prefer RSA for server access
+- **Educational Value**: Shows understanding of key strength parameters
+
+*Note: While ED25519 is more modern and efficient, RSA 4096-bit provides equivalent security with broader compatibility.*
 
 #### 2. Copy Public Key to Server
 ```bash
@@ -93,6 +105,27 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
+#### 6a. Configure Custom Port (8081)
+For enhanced security and service isolation, NGINX was configured to run on port 8081:
+```bash
+# Backup original configuration
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
+
+# Change port from 80 to 8081
+sudo sed -i 's/listen 80 default_server;/listen 8081 default_server;/' /etc/nginx/sites-available/default
+sudo sed -i 's/listen \[::\]:80 default_server;/listen [::]:8081 default_server;/' /etc/nginx/sites-available/default
+
+# Test and restart NGINX
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+**Port Selection Rationale:**
+- **Security through Obscurity**: Non-standard ports reduce automated scanning
+- **Service Isolation**: Separates web service from standard HTTP traffic
+- **Enterprise Practice**: Common pattern for development/testing environments
+- **Demonstration**: Shows advanced NGINX configuration skills
+
 ### Git Configuration
 
 #### 7. Configure Git User Information
@@ -138,8 +171,8 @@ Add this public key to your GitHub account under Settings > SSH and GPG keys.
   ```
 - [x] Custom HTML page is displayed ✓
   ```bash
-  curl -I http://91.99.193.112
-  # Result: HTTP/1.1 200 OK
+  curl -I http://91.99.193.112:8081
+  # Result: HTTP/1.1 200 OK (Port 8081)
   ```
 - [x] Configuration is valid ✓
   ```bash
@@ -157,8 +190,10 @@ Add this public key to your GitHub account under Settings > SSH and GPG keys.
 
 ### Final Validation Results
 - **Server IP**: 91.99.193.112 ✅ Accessible
+- **Website URL**: http://91.99.193.112:8081 ✅ Live and responsive
 - **SSH Security**: Password login disabled, key-only access ✅
-- **Web Server**: NGINX running with custom HTML page ✅
+- **Web Server**: NGINX running on port 8081 with custom HTML page ✅
+- **Port Configuration**: Custom port 8081 for enhanced security ✅
 - **Git Setup**: Configured with user credentials ✅
 - **GitHub Integration**: SSH key generated for repository access ✅
 
