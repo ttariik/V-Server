@@ -66,25 +66,104 @@ ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112
 ### Security Configuration
 
 #### 4. Disable Password Authentication
-Backup and edit SSH configuration on the server:
-```bash
-# Create backup
-sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
 
-# Disable password authentication
+**🔐 WARUM PASSWORD AUTHENTICATION DEAKTIVIEREN?**
+
+Password Authentication deaktivieren ist eine **kritische Sicherheitsmaßnahme** aus folgenden Gründen:
+
+- **🛡️ Schutz vor Brute-Force Attacken**: Angreifer können nicht mehr endlos Passwort-Kombinationen ausprobieren
+- **🔑 Stärkere Authentifizierung**: SSH-Keys sind mathematisch viel sicherer als Passwörter
+- **⚡ Bessere Performance**: Keine CPU-Last durch fehlgeschlagene Passwort-Versuche
+- **📊 Weniger Log-Spam**: Keine ständigen failed login attempts in den Logs
+- **🎯 Compliance**: Viele Sicherheitsstandards fordern Key-only Authentication
+
+**⚠️ WICHTIG: Stelle sicher, dass SSH Key Authentication funktioniert BEVOR du Password Authentication deaktivierst!**
+
+**🔧 SCHRITT-FÜR-SCHRITT KONFIGURATION:**
+
+```bash
+# 1. Backup der SSH-Konfiguration erstellen (WICHTIG!)
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+echo "✅ Backup erstellt unter /etc/ssh/sshd_config.backup"
+
+# 2. Password Authentication deaktivieren
+# Behandelt sowohl kommentierte (#) als auch aktive Zeilen
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+echo "✅ Password Authentication deaktiviert"
 
-# Ensure public key authentication is enabled
+# 3. Public Key Authentication explizit aktivieren
+# Stellt sicher dass SSH-Keys weiterhin funktionieren
 sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 sudo sed -i 's/PubkeyAuthentication no/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+echo "✅ Public Key Authentication aktiviert"
 
-# Verify configuration
+# 4. Konfiguration überprüfen
+echo "🔍 Aktuelle SSH-Konfiguration:"
 sudo grep -E '(PasswordAuthentication|PubkeyAuthentication)' /etc/ssh/sshd_config
 
-# Restart SSH service
+# 5. SSH-Konfiguration auf Syntax-Fehler testen
+sudo sshd -t
+if [ $? -eq 0 ]; then
+    echo "✅ SSH-Konfiguration ist syntaktisch korrekt"
+else
+    echo "❌ SSH-Konfiguration hat Fehler! Backup wiederherstellen!"
+    exit 1
+fi
+
+# 6. SSH-Service neu starten
 sudo systemctl restart ssh
+echo "✅ SSH-Service neu gestartet"
+
+# 7. Service-Status prüfen
+sudo systemctl status ssh --no-pager
 ```
+
+**📋 ERWARTETE KONFIGURATION:**
+
+Nach der Konfiguration sollten folgende Werte in `/etc/ssh/sshd_config` stehen:
+
+```
+PasswordAuthentication no       # ❌ Passwort-Login deaktiviert
+PubkeyAuthentication yes        # ✅ SSH-Key Login aktiviert
+```
+
+**🧪 SOFORTIGER TEST:**
+
+```bash
+# Test 1: SSH Key Login (sollte funktionieren)
+ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "echo 'SSH Key Login erfolgreich!'"
+
+# Test 2: Password Login (sollte fehlschlagen)
+# Versuche ohne Key - sollte "Permission denied" geben
+ssh -o PreferredAuthentications=password tsabanovic@91.99.193.112
+# Erwartete Antwort: "Permission denied (publickey)."
+```
+
+**🚨 TROUBLESHOOTING:**
+
+Falls der Login nicht mehr funktioniert:
+
+```bash
+# 1. Backup wiederherstellen
+sudo cp /etc/ssh/sshd_config.backup /etc/ssh/sshd_config
+sudo systemctl restart ssh
+
+# 2. SSH Key Berechtigung prüfen
+ls -la ~/.ssh/v_server_key      # Sollte 600 (-rw-------) sein
+chmod 600 ~/.ssh/v_server_key   # Falls nötig korrigieren
+
+# 3. Authorized Keys auf Server prüfen
+ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "ls -la ~/.ssh/authorized_keys"
+```
+
+**🎯 SICHERHEITS-RESULTAT:**
+
+Nach dieser Konfiguration ist dein Server:
+- ✅ **Immun gegen Passwort-Brute-Force Attacken**
+- ✅ **Nur noch per SSH-Key erreichbar**
+- ✅ **Entspricht modernen Sicherheitsstandards**
+- ✅ **Deutlich sicherer als Standard-Konfiguration**
 
 ### Web Server Installation
 
