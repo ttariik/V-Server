@@ -19,11 +19,11 @@ This repository documents the complete setup process for a V-Server (Virtual Pri
 
 ## Server Information
 
-- **IP Address**: 91.99.193.112
+- **IP Address**: <your_ip_adress>
 - **Operating System**: Ubuntu 22.04.5 LTS
-- **Username**: tsabanovic
+- **Username**: <your_user_name>
 - **Web Server**: NGINX 1.18.0 (Port 8081)
-- **Website URL**: http://91.99.193.112:8081
+- **Website URL**: http://<your_ip_adress>:8081
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ This repository documents the complete setup process for a V-Server (Virtual Pri
 #### 1. Generate SSH Key Pair (Local Computer)
 ```bash
 # Generate new SSH key pair on local computer
-ssh-keygen -t rsa -b 4096 -C "tsabanovic@v-server-setup" -f ~/.ssh/v_server_key
+ssh-keygen -t rsa -b 4096 -C "<your_user_name>@v-server-setup" -f ~/.ssh/v_server_key
 ```
 
 **Key Type Decision: RSA 4096-bit vs ED25519**
@@ -54,13 +54,13 @@ I chose RSA 4096-bit over the more modern ED25519 for the following reasons:
 #### 2. Copy Public Key to Server
 ```bash
 # Copy public key to server
-ssh-copy-id -i ~/.ssh/v_server_key.pub tsabanovic@91.99.193.112
+ssh-copy-id -i ~/.ssh/v_server_key.pub <your_user_name>@<your_ip_adress>
 ```
 
 #### 3. Test SSH Key Authentication
 ```bash
 # Test SSH key login
-ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112
+ssh -i ~/.ssh/v_server_key <your_user_name>@<your_ip_adress>
 ```
 
 ### Security Configuration
@@ -132,11 +132,11 @@ PubkeyAuthentication yes        # ✅ SSH key login enabled
 
 ```bash
 # Test 1: SSH Key Login (should work)
-ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "echo 'SSH Key Login successful!'"
+ssh -i ~/.ssh/v_server_key <your_user_name>@<your_ip_adress> "echo 'SSH Key Login successful!'"
 
 # Test 2: Password Login (should fail)
 # Try without key - should return "Permission denied"
-ssh -o PreferredAuthentications=password tsabanovic@91.99.193.112
+ssh -o PreferredAuthentications=password <your_user_name>@<your_ip_adress>
 # Expected response: "Permission denied (publickey)."
 ```
 
@@ -154,7 +154,7 @@ ls -la ~/.ssh/v_server_key      # Should be 600 (-rw-------)
 chmod 600 ~/.ssh/v_server_key   # Correct if necessary
 
 # 3. Check authorized keys on server
-ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112 "ls -la ~/.ssh/authorized_keys"
+ssh -i ~/.ssh/v_server_key <your_user_name>@<your_ip_adress> "ls -la ~/.ssh/authorized_keys"
 ```
 
 **🎯 SECURITY RESULT:**
@@ -210,14 +210,14 @@ sudo systemctl restart nginx
 #### 7. Configure Git User Information
 ```bash
 git config --global user.name "Tarik Sabanovic"
-git config --global user.email "tsabanovic@example.com"
+git config --global user.email "<your_user_name>@example.com"
 ```
 
 ### GitHub Integration
 
 #### 8. Generate SSH Key for GitHub (Server)
 ```bash
-ssh-keygen -t rsa -b 4096 -C "tsabanovic@v-server-github" -f ~/.ssh/github_key -N ""
+ssh-keygen -t rsa -b 4096 -C "<your_user_name>@v-server-github" -f ~/.ssh/github_key -N ""
 cat ~/.ssh/github_key.pub
 ```
 
@@ -233,11 +233,11 @@ Add this public key to your GitHub account under Settings > SSH and GPG keys.
 ### Security Tests
 - [x] SSH key authentication works ✓
   ```bash
-  ssh -i ~/.ssh/v_server_key tsabanovic@91.99.193.112
+  ssh -i ~/.ssh/v_server_key <your_user_name>@<your_ip_adress>
   ```
 - [x] Password authentication is disabled ✓
   ```bash
-  ssh -o PubkeyAuthentication=no -o PasswordAuthentication=yes tsabanovic@91.99.193.112
+  ssh -o PubkeyAuthentication=no -o PasswordAuthentication=yes <your_user_name>@<your_ip_adress>
   # Result: Permission denied (publickey)
   ```
 - [x] Server is accessible via SSH key only ✓
@@ -250,7 +250,7 @@ Add this public key to your GitHub account under Settings > SSH and GPG keys.
   ```
 - [x] Custom HTML page is displayed ✓
   ```bash
-  curl -I http://91.99.193.112:8081
+  curl -I http://<your_ip_adress>:8081
   # Result: HTTP/1.1 200 OK (Port 8081)
   ```
 - [x] Configuration is valid ✓
@@ -263,13 +263,13 @@ Add this public key to your GitHub account under Settings > SSH and GPG keys.
 - [x] Git is configured with correct user information ✓
   ```bash
   git config --global --list | grep user
-  # Result: user.name=Tarik Sabanovic, user.email=tsabanovic@example.com
+  # Result: user.name=First name Last name, user.email=<your_user_name>@example.com
   ```
 - [x] GitHub SSH key generated and ready ✓
 
 ### Final Validation Results
-- **Server IP**: 91.99.193.112 ✅ Accessible
-- **Website URL**: http://91.99.193.112:8081 ✅ Live and responsive
+- **Server IP**: <your_ip_adress> ✅ Accessible
+- **Website URL**: http://<your_ip_adress>:8081 ✅ Live and responsive
 - **SSH Security**: Password login disabled, key-only access ✅
 - **Web Server**: NGINX running on port 8081 with custom HTML page ✅
 - **Port Configuration**: Custom port 8081 for enhanced security ✅
