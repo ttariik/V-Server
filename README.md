@@ -223,7 +223,7 @@ cat ~/.ssh/github_key.pub
 
 **GitHub Public Key:**
 ```
-ssh-rsa AAAAB3NzaC1yc2EAA
+ssh-rsa AAAAB3Nz
 ```
 
 Add this public key to your GitHub account under Settings > SSH and GPG keys.
