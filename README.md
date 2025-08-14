@@ -209,7 +209,7 @@ sudo systemctl restart nginx
 
 #### 7. Configure Git User Information
 ```bash
-git config --global user.name "Tarik Sabanovic"
+git config --global user.name "First name Last name"
 git config --global user.email "<your_user_name>@example.com"
 ```
 
